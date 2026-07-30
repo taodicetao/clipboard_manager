@@ -37,23 +37,7 @@ class CursorPositionManager {
     }
     
     func getCurrentBestPosition() -> CGPoint {
-        // 1. Try to get current text cursor position
-        if let textCursorPos = getCurrentTextCursorPosition() {
-            lastKnownTextCursorPosition = textCursorPos
-            lastUpdateTime = Date()
-            return textCursorPos
-        }
-        
-        // 2. Use last known text cursor position (if recent)
-        if let lastPos = lastKnownTextCursorPosition,
-           let lastUpdate = lastUpdateTime,
-           Date().timeIntervalSince(lastUpdate) < 30 { // Within 30 secounds
-            return lastPos
-        }
-        
-        // 3. Fallback to mouse cursor position
-        let mousePos = NSEvent.mouseLocation
-        return mousePos
+        return NSEvent.mouseLocation
     }
     
     private func getCurrentTextCursorPosition() -> CGPoint? {
@@ -135,7 +119,7 @@ class CursorPositionManager {
         var rect = CGRect.zero
         if AXValueGetValue(bounds as! AXValue, .cgRect, &rect) {
             // Convert screen coordinates (macOS uses bottom-left origin)
-            return CGPoint(x: rect.minX, y: NSScreen.main?.frame.height ?? 0 - rect.minY)
+            return CGPoint(x: rect.minX, y: (NSScreen.main?.frame.height ?? 0) - rect.minY)
         }
         
         return nil

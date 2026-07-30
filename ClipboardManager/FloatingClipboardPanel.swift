@@ -71,11 +71,11 @@ final class QuickSelectState: ObservableObject {
     
     var filteredItems: [ClipboardItem] {
         if searchText.isEmpty {
-            return Array(clipboardItems.prefix(10))
+            return clipboardItems
         } else {
             return clipboardItems.filter {
                 $0.content.localizedCaseInsensitiveContains(searchText)
-            }.prefix(10).map { $0 }
+            }
         }
     }
     

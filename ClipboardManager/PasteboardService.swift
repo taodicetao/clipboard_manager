@@ -3,6 +3,7 @@ import Foundation
 import AppKit
 import Combine
 import SwiftUI
+import UserNotifications
 
 @Observable
 final class PasteboardService {
@@ -18,7 +19,7 @@ final class PasteboardService {
     private let settings = ClipboardSettings()
     
     // เปลี่ยนจาก computed properties เป็น fixed values
-    var maxItems: Int { 20 } // จำกัด 20 รายการ
+    var maxItems: Int { min(settings.maxItems, 100) }
     var pollingInterval: Double { settings.pollingInterval }
     var showImages: Bool { settings.showImages }
     var showNotifications: Bool { settings.showNotifications }
@@ -184,15 +185,17 @@ final class PasteboardService {
     }
     
     private func showNotification(for content: String) {
-        // ใช้ NSUserNotification (deprecated แต่ยังใช้ได้)
-        let notification = NSUserNotification()
-        notification.title = "Clipboard Updated"
-        notification.informativeText = String(content.prefix(100))
-        notification.hasActionButton = false
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.title = "Clipboard Updated"
+        notificationContent.body = String(content.prefix(100))
         
-        NSUserNotificationCenter.default.deliver(notification)
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString,
+            content: notificationContent,
+            trigger: nil
+        )
         
-        // หรือแค่ print สำหรับ debug
+        UNUserNotificationCenter.current().add(request)
         print("📋 Clipboard: \(String(content.prefix(50)))")
     }
     

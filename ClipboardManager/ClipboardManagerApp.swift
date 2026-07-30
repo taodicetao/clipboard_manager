@@ -1,5 +1,6 @@
 // ClipboardManagerApp.swift
 import SwiftUI
+import UserNotifications
 
 @main
 struct ClipboardManagerApp: App {
@@ -17,6 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var pasteboardService = PasteboardService.shared
     private let hotkeyManager = GlobalHotkeyManager.shared
     private var floatingPanel: FloatingClipboardPanel?
+    private let settings = ClipboardSettings()
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         // ขั้นตอน 1: ตั้งเป็น background app
@@ -30,6 +32,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // ขั้นตอน 3: Setup อื่นๆ
         setupGlobalHotkey()
         requestAccessibilityPermissions()
+        requestNotificationPermissions()
         
         // ขั้นตอน 4: ปิด windows
         for window in NSApp.windows {
@@ -66,6 +69,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // สร้าง menu
         let menu = NSMenu()
         menu.addItem(withTitle: "📋 Open Clipboard (Cmd+;)", action: #selector(openClipboard), keyEquivalent: ";")
+        menu.addItem(NSMenuItem.separator())
+        
+        let maxItemsSubmenu = NSMenu()
+        for count in [10, 20, 50, 100] {
+            let submenuItem = NSMenuItem(
+                title: "\(count) รายการ",
+                action: #selector(setMaxItems(_:)),
+                keyEquivalent: ""
+            )
+            submenuItem.tag = count
+            submenuItem.target = self
+            submenuItem.state = settings.maxItems == count ? .on : .off
+            maxItemsSubmenu.addItem(submenuItem)
+        }
+        
+        let maxItemsMenuItem = NSMenuItem(title: "⚙️ Max Items", action: nil, keyEquivalent: "")
+        maxItemsMenuItem.submenu = maxItemsSubmenu
+        menu.addItem(maxItemsMenuItem)
+        
         menu.addItem(NSMenuItem.separator())
         menu.addItem(withTitle: "🗑️ Clear All History", action: #selector(clearAllHistory), keyEquivalent: "")
         menu.addItem(withTitle: "ℹ️ About", action: #selector(showAbout), keyEquivalent: "")
@@ -172,6 +194,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.terminate(self)
     }
     
+    @objc func setMaxItems(_ sender: NSMenuItem) {
+        let newValue = sender.tag
+        settings.maxItems = newValue
+        
+        NotificationCenter.default.post(name: .settingsChanged, object: nil)
+        
+        if let submenu = sender.menu {
+            for item in submenu.items {
+                item.state = item.tag == newValue ? .on : .off
+            }
+        }
+    }
+    
     // MARK: - Setup
     private func setupGlobalHotkey() {
         hotkeyManager.onHotkeyPressed = { [weak self] in
@@ -183,6 +218,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func requestAccessibilityPermissions() {
         let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true]
         AXIsProcessTrustedWithOptions(options)
+    }
+    
+    private func requestNotificationPermissions() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
     }
     
     // MARK: - App Lifecycle

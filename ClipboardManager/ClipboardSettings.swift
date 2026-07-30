@@ -3,14 +3,14 @@ import Foundation
 import SwiftUI
 
 class ClipboardSettings: ObservableObject {
-    @AppStorage("maxItems") var maxItems: Int = 50
+    @AppStorage("maxItems") var maxItems: Int = 20
     @AppStorage("pollingInterval") var pollingInterval: Double = 0.5
     @AppStorage("showImages") var showImages: Bool = true
     @AppStorage("showNotifications") var showNotifications: Bool = false
     @AppStorage("autoStart") var autoStart: Bool = false
     
     func resetToDefaults() {
-        maxItems = 50
+        maxItems = 20
         pollingInterval = 0.5
         showImages = true
         showNotifications = false
