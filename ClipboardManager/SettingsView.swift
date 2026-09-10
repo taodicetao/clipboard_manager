@@ -159,6 +159,8 @@ struct AboutSettingsView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     SettingsView()
 }
+#endif

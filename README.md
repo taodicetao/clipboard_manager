@@ -2,9 +2,9 @@
 
 <div align="center">
 
-![macOS](https://img.shields.io/badge/macOS-13.0%2B-blue?style=flat-square)
+![macOS](https://img.shields.io/badge/macOS-15.5%2B-blue?style=flat-square)
 ![Swift](https://img.shields.io/badge/Swift-5.9%2B-orange?style=flat-square)
-![Xcode](https://img.shields.io/badge/Xcode-15.0%2B-blue?style=flat-square)
+![Build](https://img.shields.io/badge/Build-No%20Xcode%20needed-brightgreen?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
 
 **A lightweight, powerful clipboard manager that lives in your menu bar**
@@ -44,42 +44,46 @@
 
 ### 🎨 For Users
 
-<details>
-<summary><b>Download & Install (Click to expand)</b></summary>
-
-1. **Download** the latest release from [GitHub Releases](https://github.com/YOUR_USERNAME/ClipboardManager/releases)
-2. **Drag** `ClipboardManager.app` to your `/Applications` folder
-3. **Launch** the app from Applications
-4. **Configure** auto-start (optional):
+1. **Download** `ClipboardManager-1.0.dmg` from [GitHub Releases](https://github.com/taodicetao/clipboard_manager/releases)
+2. **Drag** `ClipboardManager.app` into `Applications`
+3. **Open** it. The app is not notarized with Apple, so the first launch is blocked:
+   go to **System Settings → Privacy & Security** and click **Open Anyway**.
+   If it still refuses to open, run:
+   ```bash
+   xattr -dr com.apple.quarantine /Applications/ClipboardManager.app
    ```
-   System Settings → General → Login Items → Add ClipboardManager.app
-   ```
+4. **Grant Accessibility** — required to send the paste keystroke:
+   **System Settings → Privacy & Security → Accessibility** → enable `ClipboardManager`
+5. Optional auto-start: **System Settings → General → Login Items → Open at Login → +**
 
-</details>
+Requires macOS 15.5 or later. Universal binary (Apple Silicon + Intel).
 
 ### 🛠️ For Developers
 
-<details>
-<summary><b>Build from Source (Click to expand)</b></summary>
+Xcode is **not** required — the build scripts use the Command Line Tools only
+(`xcode-select --install`).
 
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/ClipboardManager.git
-cd ClipboardManager
+git clone https://github.com/taodicetao/clipboard_manager.git
+cd clipboard_manager
 
-# Open in Xcode
-open ClipboardManager.xcodeproj
+# Build and install to /Applications
+scripts/install.sh
 
-# Build and run (or press ⌘+R in Xcode)
-xcodebuild -scheme ClipboardManager build
+# Build a distributable DMG in dist/
+scripts/package-dmg.sh
+
+# Build the .app only (SIGN_IDENTITY=- for ad-hoc, ARCHS to pick slices)
+scripts/build-app.sh dist
 ```
 
-#### Prerequisites
-- **macOS 13.0+** (Ventura or later)
-- **Xcode 15.0+**
-- **Swift 5.9+**
+Optional, recommended when rebuilding often: `scripts/setup-cert.sh` creates a
+self-signed code-signing certificate in your login keychain. Builds signed with it keep
+a stable identity, so macOS does not drop the Accessibility permission after every
+rebuild. Without it the scripts sign ad-hoc, and the permission has to be re-granted
+whenever the binary changes.
 
-</details>
+Opening `ClipboardManager.xcodeproj` in Xcode still works for editing and debugging.
 
 ## 🎮 Usage
 
@@ -137,20 +141,19 @@ ClipboardManager/
 ### Building & Distribution
 
 ```bash
-# Clean build
-xcodebuild clean build
+# Build the .app (universal, ad-hoc signed) into dist/
+SIGN_IDENTITY=- scripts/build-app.sh dist
 
-# Create archive for distribution
-xcodebuild archive \
-  -scheme ClipboardManager \
-  -archivePath ./build/ClipboardManager.xcarchive
+# Build + package the DMG that ships to users
+scripts/package-dmg.sh          # -> dist/ClipboardManager-<version>.dmg
 
-# Export for distribution
-xcodebuild -exportArchive \
-  -archivePath ./build/ClipboardManager.xcarchive \
-  -exportPath ./build \
-  -exportOptionsPlist ExportOptions.plist
+# Build + install locally
+scripts/install.sh
 ```
+
+Version, bundle id and deployment target are read from
+`ClipboardManager.xcodeproj/project.pbxproj`, so bumping `MARKETING_VERSION` there is
+enough to rename the next DMG.
 
 ### System Permissions
 
@@ -176,6 +179,13 @@ System Settings → General → Login Items
 defaults read /Applications/ClipboardManager.app/Contents/Info.plist LSUIElement
 # Should return: 1
 ```
+
+### App worked, then stopped launching after a while
+Older builds were signed through Xcode automatic signing (Apple Development identity
+plus an embedded provisioning profile). Both expire, and once they do macOS refuses to
+launch the app. Current builds sign with a self-signed certificate valid for 100 years,
+or ad-hoc, and the install scripts strip the quarantine attribute — nothing left to
+expire. Reinstall with `scripts/install.sh`, or grab the latest DMG.
 
 ### Hotkey not responding
 1. Check **Accessibility permissions** in System Settings
