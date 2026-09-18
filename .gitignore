@@ -44,3 +44,6 @@ fastlane/test_output
 
 # Distribution output
 dist/
+
+# Swift Package Manager build output
+.build/

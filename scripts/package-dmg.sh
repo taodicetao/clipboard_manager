@@ -32,9 +32,10 @@ ClipboardManager — วิธีติดตั้ง (macOS 15.5 ขึ้น�
 
 3. อนุญาต Accessibility (จำเป็น — ใช้สำหรับสั่ง paste)
    System Settings > Privacy & Security > Accessibility > เปิดสวิตช์ ClipboardManager
-4. แอปทำงานอยู่บน menu bar ไอคอน 📋 — กด Cmd+; เพื่อเรียกหน้าต่างประวัติ
+4. แอปทำงานอยู่บน menu bar (ไอคอน clipboard) — กด Cmd+; เพื่อเรียกหน้าต่างประวัติ
+   เปลี่ยน shortcut, จำนวนรายการ, และแอปที่ไม่ต้องบันทึก ได้ที่เมนู > Settings…
 
-เริ่มพร้อมเครื่อง (ถ้าต้องการ): System Settings > General > Login Items > Open at Login > +
+เริ่มพร้อมเครื่อง (ถ้าต้องการ): เมนู > Settings… > General > Launch at login
 README
 
 rm -f "$DMG"

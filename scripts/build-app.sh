@@ -25,6 +25,7 @@ BUNDLE_ID=$(build_setting PRODUCT_BUNDLE_IDENTIFIER)
 VERSION=$(build_setting MARKETING_VERSION)
 BUILD_NUMBER=$(build_setting CURRENT_PROJECT_VERSION)
 DEPLOY_TARGET=$(build_setting MACOSX_DEPLOYMENT_TARGET)
+COPYRIGHT=$(build_setting INFOPLIST_KEY_NSHumanReadableCopyright)
 SDK=$(xcrun --show-sdk-path --sdk macosx)
 
 if [ -z "${SIGN_IDENTITY:-}" ]; then
@@ -42,6 +43,8 @@ APP="$WORK/$APP_NAME.app"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
 echo "==> Compiling $APP_NAME $VERSION ($BUILD_NUMBER) for: $ARCHS"
+SOURCES=()
+while IFS= read -r -d '' file; do SOURCES+=("$file"); done < <(find "$SRC_DIR" -name '*.swift' -print0 | sort -z)
 SLICES=()
 for arch in $ARCHS; do
   swiftc \
@@ -49,7 +52,7 @@ for arch in $ARCHS; do
     -sdk "$SDK" \
     -target "$arch-apple-macos$DEPLOY_TARGET" \
     -o "$WORK/$APP_NAME-$arch" \
-    "$SRC_DIR"/*.swift
+    "${SOURCES[@]}"
   SLICES+=("$WORK/$APP_NAME-$arch")
 done
 lipo -create "${SLICES[@]}" -output "$APP/Contents/MacOS/$APP_NAME"
@@ -107,6 +110,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 	<true/>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>$COPYRIGHT</string>
 </dict>
 </plist>
 PLIST
