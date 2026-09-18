@@ -29,14 +29,15 @@ func artworkBounds(of image: CGImage) -> CGRect {
         for x in 0..<sample {
             let offset = (y * sample + x) * 4
             let r = Int(pixels[offset]), g = Int(pixels[offset + 1]), b = Int(pixels[offset + 2]), a = Int(pixels[offset + 3])
-            let isBackground = a < 16 || (min(r, g, b) >= 185 && max(r, g, b) - min(r, g, b) <= 24)
-            if !isBackground {
+            let isNeutral = a < 16 || max(r, g, b) - min(r, g, b) <= 24
+            if !isNeutral {
                 minX = min(minX, x); maxX = max(maxX, x)
                 minY = min(minY, y); maxY = max(maxY, y)
             }
         }
     }
-    guard maxX >= minX, maxY >= minY else { return CGRect(x: 0, y: 0, width: image.width, height: image.height) }
+    let coverage = Double((maxX - minX + 1) * (maxY - minY + 1)) / Double(sample * sample)
+    guard maxX >= minX, maxY >= minY, coverage >= 0.3 else { return CGRect(x: 0, y: 0, width: image.width, height: image.height) }
     let scaleX = Double(image.width) / Double(sample), scaleY = Double(image.height) / Double(sample)
     let rect = CGRect(x: Double(minX) * scaleX, y: Double(sample - 1 - maxY) * scaleY, width: Double(maxX - minX + 1) * scaleX, height: Double(maxY - minY + 1) * scaleY)
     return rect.insetBy(dx: rect.width * 0.015, dy: rect.height * 0.015).integral
