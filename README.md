@@ -221,6 +221,12 @@ scripts/ui-smoke.sh
 content, excluded apps, trimming), persistence, settings migration, the shortcut model
 and the panel's keyboard routing. Run both before tagging a release.
 
+### App icon
+
+Generate full-bleed artwork with the prompt in `docs/app-icon-prompt.md`, then run
+`scripts/make-app-icon.swift path/to/artwork.png` — it trims, applies Apple's icon shape
+and writes every size into the asset catalog.
+
 ### System Permissions
 
 | Permission | Purpose | Required? |

@@ -1,48 +1,60 @@
 # App icon — generation prompt (macOS 27 Golden Gate style)
 
-Target: 1024×1024 PNG, opaque squircle on a transparent canvas. Drop the result into
-`ClipboardManager/Assets.xcassets/AppIcon.appiconset/` as the largest PNG — the build
-script picks the biggest file there and generates every size.
+## Workflow
+
+1. Generate a **full-bleed square** image (no rounded corners, no shadow, no transparent
+   or checkerboard background — the artwork must run edge to edge). 1024 px or larger.
+2. Run `scripts/make-app-icon.swift path/to/image.png` — it trims any frame the generator
+   added, applies Apple's icon shape (1024 canvas, 824 px rounded square, 22.37 % corner
+   radius, transparent outside) and writes all ten sizes plus `Contents.json` into
+   `ClipboardManager/Assets.xcassets/AppIcon.appiconset`.
+3. `scripts/install.sh` to see it in the Dock and menu bar.
+
+Generators cannot produce real transparency: a "transparent background" request comes back
+as a baked-in checkerboard inside a JPEG, and the squircle they draw never matches Apple's
+mask. Ask for full-bleed artwork and let the script do the shape.
 
 ## Main prompt
 
 ```
-macOS 27 Golden Gate app icon, single rounded-square squircle centered on a transparent
-background, Apple Liquid Glass design language. Subject: a clipboard with three
-stacked translucent cards fanning out from it, the top card slightly lifted — the
-history of things copied. Material: layered frosted glass with soft internal light,
-subtle specular rim highlights along the top edges, gentle refraction where layers
-overlap, thin luminous edge. Palette: deep indigo-to-teal gradient background inside
-the squircle, cards in white glass with a faint cyan tint, one warm coral accent on the
-clipboard clip. Lighting from top-left, soft ambient occlusion under each layer,
-smooth studio look, no harsh shadows. Minimal, geometric, symmetrical composition,
-generous margins, shapes readable at 16 px. No text, no letters, no wordmark, no
-paper texture, no photorealistic clutter. Ultra clean vector-like render, 1024×1024,
-high detail.
+App icon artwork for macOS 27, full-bleed square, edge to edge, no rounded corners, no
+border, no frame, no drop shadow, no background grid. Style: Apple's 2025 redesigned
+system icons (Finder, Notes, Reminders) — soft frosted-glass layers on a bright matte
+gradient, flat front view, no bevel, no glossy plastic, no 3D perspective. Background:
+smooth gradient from sky blue at the top to vivid violet at the bottom. Subject: one
+large white translucent glass clipboard, centered, filling about 65 % of the height, a
+small rounded clip at the top; behind it two identical glass sheets offset a little to
+the upper right, like a stack of things copied. Glass is milky white with 70 % opacity,
+soft inner glow, a thin brighter edge along the top of each layer, gentle shadow where a
+layer overlaps the one below. Clean geometric shapes, wide even margins, readable at
+16 px. No text, no letters, no icons inside the clipboard, no paper lines, no hands,
+no photo elements. Vector-clean render, 1024×1024, high detail.
 ```
 
 ## Variations
 
-- **Monochrome glass** — replace the palette line with: `single-hue translucent blue
-  glass, white highlights only, no warm accent` (closest to Apple's own utilities).
-- **Dark variant** for Dark Mode / tinted icons — `graphite glass background, cards in
-  smoked glass, edges lit in pale blue`.
-- **Flatter fallback** if the generator over-renders — add `flat layered paper-cut
-  style with soft drop shadows, still glass-like translucency, less gloss`.
+- **Cool monochrome** — background `pale blue to deep blue`, glass `white`; the most
+  Apple-like, and it stays readable next to Finder and Safari in the Dock.
+- **Warm accent** — add `a small coral clip on the clipboard` for one point of color.
+- **Dark Mode / tinted variant** — background `graphite to near-black`, glass
+  `smoked white at 60 % opacity`, edges `lit pale blue`.
+- **Simpler silhouette** if the stack reads as noise at small sizes — `a single glass
+  clipboard, no sheets behind it`.
 
-## Negative prompt (for generators that support one)
+## Negative prompt
 
 ```
-text, letters, watermark, logo, multiple icons, 3D perspective tilt, photo,
-skeuomorphic wood or leather, drop shadow outside the squircle, background scene,
-border, frame, blurry, low resolution
+checkerboard, transparency grid, rounded corners, squircle, icon frame, border, drop
+shadow outside the artwork, bevel, glossy button, chrome, dark navy, 3D isometric
+perspective, text, letters, watermark, multiple icons, photo, paper texture, blurry
 ```
 
 ## Checklist before shipping
 
-- Read at 16 px and 32 px: the clipboard silhouette must still be recognizable.
-- Squircle corner radius ≈ 22.37 % of the side (Apple's mask); the generator's shape is
-  masked by macOS anyway, so keep the artwork inside the safe area.
-- Prefer a version with fewer layers if the glass highlights turn into noise at 32 px.
+- Zoom to 16 px and 32 px: the clipboard silhouette must still read.
+- The glass must be lighter than the background — Apple's icons are light subjects on
+  saturated backgrounds, not dark buttons.
+- If the generator still adds a frame, `make-app-icon.swift` trims it, but the artwork
+  inside will be small — regenerate with "full-bleed, edge to edge" repeated.
 - Optional polish: rebuild the final artwork as real layers in Apple's **Icon Composer**
-  (ships with Xcode) to get true Liquid Glass behavior in the Dock and Launchpad.
+  (ships with Xcode) for true Liquid Glass behavior in the Dock and Launchpad.
