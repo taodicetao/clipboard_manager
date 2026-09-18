@@ -1,4 +1,4 @@
-# App icon — generation prompt (macOS 26 style)
+# App icon — generation prompt (macOS 27 Golden Gate style)
 
 Target: 1024×1024 PNG, opaque squircle on a transparent canvas. Drop the result into
 `ClipboardManager/Assets.xcassets/AppIcon.appiconset/` as the largest PNG — the build
@@ -7,7 +7,7 @@ script picks the biggest file there and generates every size.
 ## Main prompt
 
 ```
-macOS Tahoe app icon, single rounded-square squircle centered on a transparent
+macOS 27 Golden Gate app icon, single rounded-square squircle centered on a transparent
 background, Apple Liquid Glass design language. Subject: a clipboard with three
 stacked translucent cards fanning out from it, the top card slightly lifted — the
 history of things copied. Material: layered frosted glass with soft internal light,
@@ -45,4 +45,4 @@ border, frame, blurry, low resolution
   masked by macOS anyway, so keep the artwork inside the safe area.
 - Prefer a version with fewer layers if the glass highlights turn into noise at 32 px.
 - Optional polish: rebuild the final artwork as real layers in Apple's **Icon Composer**
-  (ships with Xcode 26) to get true Liquid Glass behavior in the Dock and Launchpad.
+  (ships with Xcode) to get true Liquid Glass behavior in the Dock and Launchpad.
