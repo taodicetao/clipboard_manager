@@ -18,35 +18,44 @@ mask. Ask for full-bleed artwork and let the script do the shape.
 
 ```
 App icon artwork for macOS 27, full-bleed square, edge to edge, no rounded corners, no
-border, no frame, no drop shadow, no background grid. Style: Apple's 2025 redesigned
-system icons (Finder, Notes, Reminders) — soft frosted-glass layers on a bright matte
-gradient, flat front view, no bevel, no glossy plastic, no 3D perspective. Background:
-smooth gradient from sky blue at the top to vivid violet at the bottom. Subject: one
-large white translucent glass clipboard, centered, filling about 65 % of the height, a
-small rounded clip at the top; behind it two identical glass sheets offset a little to
-the upper right, like a stack of things copied. Glass is milky white with 70 % opacity,
-soft inner glow, a thin brighter edge along the top of each layer, gentle shadow where a
-layer overlaps the one below. Clean geometric shapes, wide even margins, readable at
-16 px. No text, no letters, no icons inside the clipboard, no paper lines, no hands,
-no photo elements. Vector-clean render, 1024×1024, high detail.
+border, no frame, no drop shadow, no background grid. Style: Apple's redesigned system
+icons — one bold glass object on a vivid matte gradient, flat front view, soft studio
+light, no bevel, no gloss, no 3D tilt. Background: smooth gradient from electric blue at
+the top-left to deep indigo at the bottom-right. Subject: a single clipboard filling
+about 70 % of the height, centered. The board is bright white frosted glass at 85 %
+opacity with softly rounded corners and a thin luminous edge. A coral-orange clip sits
+centered on its top edge, clearly visible, with a small round hole. On the board, three
+short rounded text lines in pale blue-gray at 40 % opacity, left-aligned, suggesting
+copied text. Behind the board one identical sheet peeks out, offset a little up and to
+the right, slightly more transparent — the previous copy. A gentle soft shadow under the
+board onto the background. Clean geometric shapes, even margins, readable at 16 px. No
+letters, no words, no hands, no photo elements, no extra objects. Vector-clean render,
+1024×1024, high detail.
 ```
+
+Why this version: the dark indigo attempt turned into a glossy plastic button, and the
+all-glass stack lost the clipboard identity at 16 px because the clip was glass on glass.
+This one keeps the light-on-vivid Apple look but gives the silhouette one contrasting
+anchor (the coral clip), a more opaque board so it separates from the violet bottom, and
+faint lines that say "text" without becoming clutter.
 
 ## Variations
 
-- **Cool monochrome** — background `pale blue to deep blue`, glass `white`; the most
-  Apple-like, and it stays readable next to Finder and Safari in the Dock.
-- **Warm accent** — add `a small coral clip on the clipboard` for one point of color.
-- **Dark Mode / tinted variant** — background `graphite to near-black`, glass
-  `smoked white at 60 % opacity`, edges `lit pale blue`.
-- **Simpler silhouette** if the stack reads as noise at small sizes — `a single glass
-  clipboard, no sheets behind it`.
+- **Cooler** — background `sky blue to royal blue`, clip `navy` instead of coral.
+- **Two-tone Apple** — background `white to pale gray`, board `deep blue glass`, clip
+  `white`; the inverted look used by Apple's productivity icons.
+- **No lines** if the text lines render as noise at small sizes — drop the sentence
+  about text lines.
+- **Dark Mode / tinted variant** — background `graphite to near-black`, board `smoked
+  white glass at 60 % opacity`, clip `coral`.
 
 ## Negative prompt
 
 ```
 checkerboard, transparency grid, rounded corners, squircle, icon frame, border, drop
-shadow outside the artwork, bevel, glossy button, chrome, dark navy, 3D isometric
-perspective, text, letters, watermark, multiple icons, photo, paper texture, blurry
+shadow outside the artwork, bevel, glossy plastic button, chrome, dark navy background,
+3D isometric perspective, text, letters, watermark, multiple icons, photo, paper
+texture, blurry, low contrast
 ```
 
 ## Checklist before shipping
